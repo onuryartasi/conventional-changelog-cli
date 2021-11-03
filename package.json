@@ -1,0 +1,40 @@
+{
+  "name": "conventional-changelog-cli",
+  "version": "1.0.0",
+  "description": "Generates a changelog with the Conventional Changelog CLI",
+  "keywords": [
+    "changelog",
+    "commits",
+    "conventional",
+    "github"
+  ],
+  "homepage": "https://github.com/onuryartasi/conventional-changelog-cli#readme",
+  "bugs": {
+    "url": "https://github.com/onuryartasi/conventional-changelog-cli/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/onuryartasi/conventional-changelog-cli.git"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "Onur Yartaşı",
+    "email": "onuryartasi@live.com"
+  },
+  "main": "src/index.js",
+  "dependencies": {
+    "@iarna/toml": "^2.2.5",
+    "commander": "^8.3.0",
+    "conventional-changelog": "3.1.23",
+    "conventional-recommended-bump": "6.0.10",
+    "git-semver-tags": "4.1.0",
+    "object-path": "^0.11.5",
+    "semver": "^7.3.2",
+    "yaml": "^1.10.0"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "11.0.0",
+    "@commitlint/config-conventional": "11.0.0",
+    "husky": "4.3.6"
+  }
+}
