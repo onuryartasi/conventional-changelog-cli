@@ -1,0 +1,48 @@
+name: Build & Release
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+env:
+  NODE-VERSION: '16'
+
+jobs:
+  build:
+  runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions/setup-node@v2
+        with:
+          node-version: ${{ env.NODE-VERSION }}
+
+      - name: Install Yarn
+        run: npm install -g pkg
+
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: echo "::set-output name=dir::$(yarn config get cacheFolder)"
+
+      - uses: actions/cache@v2
+        id: yarn-cache # use this to check for `cache-hit` (`steps.yarn-cache.outputs.cache-hit != 'true'`)
+        with:
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+
+      - name: Install yarn package
+        run: yarn
+
+      - name: Compile Code
+        run: pkg src/index.js -t node16-linux,node16-win,node16-macos -o dist/conventional-changelog-cli
+
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            dist/conventional-changelog-cli-linux
+            dist/conventional-changelog-cli-win.exe
+            dist/conventional-changelog-cli-macos
+        
