@@ -1,4 +1,3 @@
-const core = require('@actions/core')
 const fs = require('fs')
 
 module.exports = class BaseVersioning {
@@ -30,7 +29,7 @@ module.exports = class BaseVersioning {
       return fs.readFileSync(this.fileLocation, 'utf8')
     }
 
-    core.warning(`Tried to read "${this.fileLocation}" but file does not exist!`)
+    console.log(`Tried to read "${this.fileLocation}" but file does not exist!`)
 
     return ''
   }
@@ -41,7 +40,7 @@ module.exports = class BaseVersioning {
    * @param {!string} releaseType - The type of release
    * @return {*}
    */
-  bump = (releaseType) => {
+  bump = (releaseType,fallbackVersion) => {
     throw new Error('Implement bump logic in class!')
   }
 

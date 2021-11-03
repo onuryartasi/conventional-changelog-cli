@@ -1,4 +1,3 @@
-const core = require('@actions/core')
 const objectPath = require('object-path')
 const yaml = require('yaml')
 
@@ -13,7 +12,7 @@ module.exports = class Yaml extends BaseVersioning {
    * @param {!string} releaseType - The type of release
    * @return {*}
    */
-  bump = async(releaseType) => {
+  bump = async(releaseType,fallbackVersion) => {
     // Read the file
     const fileContent = this.read()
     const yamlContent = yaml.parse(fileContent) || {}
@@ -23,6 +22,7 @@ module.exports = class Yaml extends BaseVersioning {
     this.newVersion = await bumpVersion(
       releaseType,
       oldVersion,
+      fallbackVersion,
     )
 
     // Update the file

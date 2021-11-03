@@ -1,4 +1,4 @@
-const core = require('@actions/core')
+
 const semverValid = require('semver').valid
 
 const requireScript = require('./requireScript')
@@ -8,9 +8,10 @@ const requireScript = require('./requireScript')
  *
  * @param releaseType
  * @param version
+ * @param fallbackVersion
  * @returns {string}
  */
-module.exports = async (releaseType, version) => {
+module.exports = async (releaseType, version,fallbackVersion) => {
   let major, minor, patch
 
   if (version) {
@@ -32,7 +33,7 @@ module.exports = async (releaseType, version) => {
         patch = parseInt(patch, 10) + 1
     }
   } else {
-    let version = semverValid(core.getInput('fallback-version'))
+    let version = semverValid(fallbackVersion)
 
     if (version) {
       [major, minor, patch] = version.split('.')
@@ -46,7 +47,7 @@ module.exports = async (releaseType, version) => {
     console.log(`The version could not be detected, using fallback version '${major}.${minor}.${patch}'.`)
   }
 
-  const preChangelogGenerationFile = core.getInput('pre-changelog-generation')
+  const preChangelogGenerationFile = preChangelogGenerationFile
 
   let newVersion = `${major}.${minor}.${patch}`
 

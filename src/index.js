@@ -1,4 +1,3 @@
-const core = require('@actions/core')
 const conventionalRecommendedBump = require('conventional-recommended-bump')
 const path = require('path')
 
@@ -9,7 +8,7 @@ const { Command } = require('commander');
 const program = new Command();
 program.version('0.0.1');
 
-async function handleVersioningByExtension(ext, file, versionPath, releaseType) {
+async function handleVersioningByExtension(ext, file, versionPath, releaseType,fallbackVersion) {
   const versioning = getVersioning(ext)
 
   // File type not supported
@@ -20,7 +19,7 @@ async function handleVersioningByExtension(ext, file, versionPath, releaseType) 
   versioning.init(path.resolve(process.cwd(), file), versionPath)
 
   // Bump the version in the package.json
-  await versioning.bump(releaseType)
+  await versioning.bump(releaseType,fallbackVersion)
 
   return versioning
 }
@@ -70,6 +69,7 @@ async function run() {
     const conventionalConfigFile = parameters.configFilePath
     const commitPath = parameters.commitPath
     const preChangelogGenerationFile = parameters.preChangelogGeneration
+    const fallbackVersion = parameters.fallbackVersion
 
     console.log(`Using "${preset}" preset`)
     console.log(`Using "${gitCommitMessage}" as commit message`)
@@ -132,6 +132,7 @@ async function run() {
           versionFile,
           versionPath,
           recommendation.releaseType,
+          fallbackVersion,
         )
 
         newVersion = versioning.newVersion
@@ -145,7 +146,7 @@ async function run() {
             const fileExtension = file.split('.').pop()
             console.log(`Bumping version to file "${file}" with extension "${fileExtension}"`)
 
-            return handleVersioningByExtension(fileExtension, file, versionPath, recommendation.releaseType)
+            return handleVersioningByExtension(fileExtension, file, versionPath, recommendation.releaseType,fallbackVersion)
           }),
         )
 
@@ -228,7 +229,8 @@ async function run() {
 
     })
   } catch (error) {
-    core.setFailed(error)
+    console.log(error)
+    return
   }
 }
 

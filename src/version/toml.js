@@ -1,4 +1,3 @@
-const core = require('@actions/core')
 const objectPath = require('object-path')
 const toml = require('@iarna/toml')
 
@@ -13,7 +12,7 @@ module.exports = class Toml extends BaseVersioning {
    * @param {!string} releaseType - The type of release
    * @return {*}
    */
-  bump = async(releaseType) => {
+  bump = async(releaseType,fallbackVersion) => {
     // Read the file
     const fileContent = this.read()
     const tomlContent = toml.parse(fileContent)
@@ -23,6 +22,7 @@ module.exports = class Toml extends BaseVersioning {
     this.newVersion = await bumpVersion(
       releaseType,
       oldVersion,
+      fallbackVersion,
     )
 
     // Update the file

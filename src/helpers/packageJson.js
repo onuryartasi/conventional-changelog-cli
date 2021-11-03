@@ -1,6 +1,5 @@
 const path = require('path')
 const fs = require('fs')
-const core = require('@actions/core')
 
 const packageJsonLoc = path.resolve(core.getInput('package-json'))
 

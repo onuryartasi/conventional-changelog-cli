@@ -1,4 +1,3 @@
-const core = require('@actions/core')
 const objectPath = require('object-path')
 
 const BaseVersioning = require('./base')
@@ -12,7 +11,7 @@ module.exports = class Json extends BaseVersioning {
    * @param {!string} releaseType - The type of release
    * @return {*}
    */
-  bump = async(releaseType) => {
+  bump = async(releaseType,fallbackVersion) => {
     // Read the file
     const fileContent = this.read()
 
@@ -36,6 +35,7 @@ module.exports = class Json extends BaseVersioning {
     this.newVersion = await bumpVersion(
       releaseType,
       oldVersion,
+      fallbackVersion,
     )
 
     console.log(`Bumped file "${this.fileLocation}" from "${oldVersion}" to "${this.newVersion}"`)

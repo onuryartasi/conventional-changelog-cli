@@ -1,4 +1,3 @@
-const core = require('@actions/core')
 const gitSemverTags = require('git-semver-tags')
 
 const BaseVersioning = require('./base')
@@ -6,9 +5,8 @@ const bumpVersion = require('../helpers/bumpVersion')
 
 module.exports = class Git extends BaseVersioning {
 
-  bump = (releaseType) => {
+  bump = (releaseType,fallbackVersion,tagPrefix) => {
     return new Promise((resolve) => {
-      const tagPrefix = core.getInput('tag-prefix')
 
       gitSemverTags({
         tagPrefix,
@@ -19,6 +17,7 @@ module.exports = class Git extends BaseVersioning {
         this.newVersion = await bumpVersion(
           releaseType,
           currentVersion,
+          fallbackVersion,
         )
 
         // We are done
