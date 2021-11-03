@@ -18,6 +18,7 @@ module.exports = class Git extends BaseVersioning {
           releaseType,
           currentVersion,
           fallbackVersion,
+          
         )
 
         // We are done

@@ -11,7 +11,7 @@ module.exports = class Json extends BaseVersioning {
    * @param {!string} releaseType - The type of release
    * @return {*}
    */
-  bump = async(releaseType,fallbackVersion) => {
+  bump = async(releaseType) => {
     // Read the file
     const fileContent = this.read()
 
@@ -35,7 +35,6 @@ module.exports = class Json extends BaseVersioning {
     this.newVersion = await bumpVersion(
       releaseType,
       oldVersion,
-      fallbackVersion,
     )
 
     console.log(`Bumped file "${this.fileLocation}" from "${oldVersion}" to "${this.newVersion}"`)

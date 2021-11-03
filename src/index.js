@@ -8,7 +8,7 @@ const { Command } = require('commander');
 const program = new Command();
 program.version('0.0.1');
 
-async function handleVersioningByExtension(ext, file, versionPath, releaseType,fallbackVersion) {
+async function handleVersioningByExtension(ext, file, versionPath, releaseType) {
   const versioning = getVersioning(ext)
 
   // File type not supported
@@ -19,7 +19,7 @@ async function handleVersioningByExtension(ext, file, versionPath, releaseType,f
   versioning.init(path.resolve(process.cwd(), file), versionPath)
 
   // Bump the version in the package.json
-  await versioning.bump(releaseType,fallbackVersion)
+  await versioning.bump(releaseType)
 
   return versioning
 }
@@ -46,7 +46,7 @@ async function run() {
     .option('--commit-path <path>','The path to the package','./') 
     .option('--config-file-path <path>','Path to the conventional changelog config file. If set, the preset setting will be ignored')
     .option('--pre-changelog-generation <path>','Path to the pre-changelog-generation script file')
-    .option('--fallback-version',"fallback version","0.1.0")
+    .option('--fallback-version <version>',"fallback version","0.1.0")
     .parse()
 
     const parameters = program.opts();
@@ -68,9 +68,11 @@ async function run() {
     const skipEmptyRelease = parameters.skipOnEmpty
     const conventionalConfigFile = parameters.configFilePath
     const commitPath = parameters.commitPath
-    const preChangelogGenerationFile = parameters.preChangelogGeneration
     const fallbackVersion = parameters.fallbackVersion
+    const preChangelogGenerationFile = parameters.preChangelogGeneration
 
+    module.exports.preChangelogGenerationFile = preChangelogGenerationFile
+    module.exports.fallbackVersion = fallbackVersion
     console.log(`Using "${preset}" preset`)
     console.log(`Using "${gitCommitMessage}" as commit message`)
     console.log(`Using "${gitUserName}" as git user.name`)
@@ -132,7 +134,6 @@ async function run() {
           versionFile,
           versionPath,
           recommendation.releaseType,
-          fallbackVersion,
         )
 
         newVersion = versioning.newVersion
@@ -146,7 +147,7 @@ async function run() {
             const fileExtension = file.split('.').pop()
             console.log(`Bumping version to file "${file}" with extension "${fileExtension}"`)
 
-            return handleVersioningByExtension(fileExtension, file, versionPath, recommendation.releaseType,fallbackVersion)
+            return handleVersioningByExtension(fileExtension, file, versionPath, recommendation.releaseType)
           }),
         )
 
