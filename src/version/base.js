@@ -40,10 +40,19 @@ module.exports = class BaseVersioning {
    * @param {!string} releaseType - The type of release
    * @return {*}
    */
-  bump = (releaseType,fallbackVersion) => {
+  bump = (releaseType) => {
     throw new Error('Implement bump logic in class!')
   }
 
+  /**
+   * Logic for just bumping version, not write to file.
+   *
+   * @param {!string} releaseType - The type of release
+   * @return {*}
+   */
+  getVersion = async(releaseType) => {
+    throw new Error('Implement bump logic in class!')
+  }
   /**
    * Update the file
    *

@@ -12,7 +12,7 @@ module.exports = class Toml extends BaseVersioning {
    * @param {!string} releaseType - The type of release
    * @return {*}
    */
-  bump = async(releaseType,fallbackVersion) => {
+  bump = async(releaseType) => {
     // Read the file
     const fileContent = this.read()
     const tomlContent = toml.parse(fileContent)
@@ -22,7 +22,6 @@ module.exports = class Toml extends BaseVersioning {
     this.newVersion = await bumpVersion(
       releaseType,
       oldVersion,
-      fallbackVersion,
     )
 
     // Update the file
@@ -44,6 +43,22 @@ module.exports = class Toml extends BaseVersioning {
       objectPath.set(tomlContent, this.versionPath, this.newVersion)
       this.update(toml.stringify(tomlContent))
     }
+  }
+
+  getVersion = async(releaseType) => {
+    const fileContent = this.read()
+    const tomlContent = toml.parse(fileContent)
+    const oldVersion = objectPath.get(tomlContent, this.versionPath, null)
+
+    // Get the new version
+    this.newVersion = await bumpVersion(
+      releaseType,
+      oldVersion,
+    )
+
+    return this.newVersion
+
+
   }
 
 }

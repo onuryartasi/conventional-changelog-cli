@@ -11,10 +11,9 @@ const requireScript = require('./requireScript')
  * @param fallbackVersion
  * @returns {string}
  */
-module.exports = async (releaseType, version,) => {
+module.exports = async (releaseType, version) => {
   let major, minor, patch
   const {preChangelogGenerationFile,fallbackVersion}= require('../index')
-  console.log(`asdasd ${fallbackVersion}`)
 
   if (version) {
     [major, minor, patch] = version.split('.')

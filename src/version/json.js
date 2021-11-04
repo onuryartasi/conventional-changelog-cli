@@ -37,6 +37,7 @@ module.exports = class Json extends BaseVersioning {
       oldVersion,
     )
 
+
     console.log(`Bumped file "${this.fileLocation}" from "${oldVersion}" to "${this.newVersion}"`)
 
     // Update the content with the new version
@@ -46,6 +47,36 @@ module.exports = class Json extends BaseVersioning {
     this.update(
       JSON.stringify(jsonContent, null, 2),
     )
+  }
+
+  getVersion = async(releaseType) => {
+    const fileContent = this.read()
+
+    // Parse the file
+    let jsonContent
+    try {
+      jsonContent = JSON.parse(fileContent)
+    } catch (error) {
+      core.startGroup(`Error when parsing the file '${this.fileLocation}'`)
+      console.log(`File-Content: ${fileContent}`)
+      console.log(error) // should be 'warning' ?
+      core.endGroup()
+
+      jsonContent = {}
+    }
+
+    // Get the old version
+    const oldVersion = objectPath.get(jsonContent, this.versionPath, null)
+
+
+    // Get the new version
+    this.newVersion = await bumpVersion(
+      releaseType,
+      oldVersion,
+    )
+
+    return this.newVersion
+
   }
 
 }
