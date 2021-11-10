@@ -9,7 +9,7 @@ const program = new Command();
 
 
 async function main() {
-  program.version('0.0.1');
+  program.version('1.0.2');
   program.enablePositionalOptions();
   program
 .option('--git-message <message>','Commit message to use','chore(release): {version}')
@@ -351,7 +351,7 @@ async function getVersion(parameters){
         throw new Error("Commits not found on this package.")
       }
       
-      console.log(newVersion)
+      console.log(newVersion[0])
     
     })
   } catch (error) {
