@@ -312,18 +312,14 @@ async function getVersion(parameters){
       tagPrefix,
       config,
     }
-    console.log(commitPath)
     if (commitPath) {
       gitRawCommitsOpts.path = commitPath
       options.path = commitPath
     }
 
-
-    console.log(options)
     conventionalRecommendedBump(options, async(error, recommendation) => {
       if (error) {
-        console.log(new Error(error.message))
-        return
+        throw new Error(error.message)
       }
       let newVersion
     
@@ -353,17 +349,14 @@ async function getVersion(parameters){
 
       if (skipEmptyRelease && cleanChangelog === '') {
         throw new Error("Commits not found on this package.")
-      }else{
-        console.log(newVersion)
       }
       
-
-      
-
+      console.log(newVersion)
+    
     })
   } catch (error) {
-    console.log(error)
-    return
+
+    throw new Error(error)
   }
 
 }
