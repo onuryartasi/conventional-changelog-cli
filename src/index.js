@@ -280,7 +280,7 @@ async function run(parameters) {
 
 
       try {
-        await git.addRemote(`https://x-access-token:${token}@github.com/${repository.owner}/${repository.repo}.git`)
+        await git.addRemote('origin',`https://x-access-token:${token}@github.com/${repository.owner}/${repository.repo}.git`)
         console.log(await git.listRemote())
         await git.checkoutLocalBranch(gitTag);
         await git.add([versionFile,outputFile])
