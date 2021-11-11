@@ -273,7 +273,7 @@ async function run(parameters) {
 
       try {
         await git.checkoutLocalBranch(gitTag);
-        await git.add([outputFile,conventionalConfigFile])
+        await git.add([versionFile,outputFile])
         await git.commit(gitCommitMessage.replace('{version}', gitTag))
         await git.tag(["-a",gitTag,"-m",stringChangelog])
         await git.push()
