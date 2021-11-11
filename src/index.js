@@ -5,7 +5,11 @@ const getVersioning = require('./version')
 const changelog = require('./helpers/generateChangelog')
 const requireScript = require('./helpers/requireScript')
 const { Command } = require('commander');
+const { Octokit } = require("@octokit/rest");
+const simpleGit = require('simple-git');
 const program = new Command();
+const git = simpleGit();
+
 
 
 async function main() {
@@ -87,6 +91,7 @@ async function handleVersioningByExtension(ext, file, versionPath, releaseType) 
 async function run(parameters) {
   try {
 
+
     const gitCommitMessage = parameters.gitMessage
     const gitUserName = parameters.gitUserName
     const gitUserEmail = parameters.gitUserEmail
@@ -107,32 +112,36 @@ async function run(parameters) {
     const fallbackVersion = parameters.fallbackVersion
     const preChangelogGenerationFile = parameters.preChangelogGeneration
 
+
+
     module.exports.preChangelogGenerationFile = preChangelogGenerationFile
     module.exports.fallbackVersion = fallbackVersion
 
+    const token = process.env.GITHUB_TOKEN || '';
+    const octokit = new Octokit({ auth: token });
 
-      console.log(`Using "${preset}" preset`)
-      console.log(`Using "${gitCommitMessage}" as commit message`)
-      console.log(`Using "${gitUserName}" as git user.name`)
-      console.log(`Using "${gitUserEmail}" as git user.email`)
-      console.log(`Using "${releaseCount}" release count`)
-      console.log(`Using "${versionFile}" as version file`)
-      console.log(`Using "${versionPath}" as version path`)
-      console.log(`Using "${tagPrefix}" as tag prefix`)
-      console.log(`Using "${commitPath}" as CommitPath`)
-      console.log(`Using "${outputFile}" as output file`)
-      console.log(`Using "${conventionalConfigFile}" as config file`)
-  
-      if (preCommitFile) {
-        console.log(`Using "${preCommitFile}" as pre-commit script`)
-      }
-  
-      if (preChangelogGenerationFile) {
-        console.log(`Using "${preChangelogGenerationFile}" as pre-changelog-generation script`)
-      }
-  
-      console.log(`Skipping empty releases is "${skipEmptyRelease ? 'enabled' : 'disabled'}"`)
-      console.log(`Skipping the update of the version file is "${skipVersionFile ? 'enabled' : 'disabled'}"`)
+    console.log(`Using "${preset}" preset`)
+    console.log(`Using "${gitCommitMessage}" as commit message`)
+    console.log(`Using "${gitUserName}" as git user.name`)
+    console.log(`Using "${gitUserEmail}" as git user.email`)
+    console.log(`Using "${releaseCount}" release count`)
+    console.log(`Using "${versionFile}" as version file`)
+    console.log(`Using "${versionPath}" as version path`)
+    console.log(`Using "${tagPrefix}" as tag prefix`)
+    console.log(`Using "${commitPath}" as CommitPath`)
+    console.log(`Using "${outputFile}" as output file`)
+    console.log(`Using "${conventionalConfigFile}" as config file`)
+
+    if (preCommitFile) {
+      console.log(`Using "${preCommitFile}" as pre-commit script`)
+    }
+
+    if (preChangelogGenerationFile) {
+      console.log(`Using "${preChangelogGenerationFile}" as pre-changelog-generation script`)
+    }
+
+    console.log(`Skipping empty releases is "${skipEmptyRelease ? 'enabled' : 'disabled'}"`)
+    console.log(`Skipping the update of the version file is "${skipVersionFile ? 'enabled' : 'disabled'}"`)
     
 
     
@@ -258,6 +267,49 @@ async function run(parameters) {
 
       // Create the new tag
       //await git.createTag(gitTag)
+
+
+      try{
+        const ref = await octokit.rest.git.getRef({
+          owner:"hs-baumappe",
+          repo:"baumappe-tbd",
+          ref:"heads/test-pr2",
+        });
+      }catch(data){
+        if ( data.status == 404) {
+          console.log("Branch not found, creating...")
+         const ref = await octokit.rest.git.createRef({
+            owner:"hs-baumappe", // get from azure pipelines env
+            repo:"baumappe-tbd", // get from azure pipelines env
+            ref:"refs/heads/test-pr2", // set branch name with tag
+            sha: "a2dcc5a77433cda8bae3c566341a22bef79a1505" //get sha from azure pipelines env
+          })
+          if (ref.status == 200){
+            console.log("Branch created.")
+          }else{
+            console.log("Branch didn't create")
+          }
+        }
+      }
+
+
+      try {
+        await git.checkoutLocalBranch(gitTag);
+        await git.add([outputFile,conventionalConfigFile])
+        await git.commit(gitCommitMessage.replace('{version}', gitTag))
+        await git.addTag(gitTag)
+        await git.push("--follow-tags")
+      } catch(e) {
+
+      }
+
+
+
+
+
+
+
+
 
       // core.info('Push all changes')
       // try {

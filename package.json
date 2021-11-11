@@ -1,6 +1,6 @@
 {
   "name": "conventional-changelog-cli",
-  "version": "1.0.10",
+  "version": "1.0.40",
   "description": "Generates a changelog with the Conventional Changelog CLI",
   "keywords": [
     "changelog",
@@ -24,12 +24,15 @@
   "main": "src/index.js",
   "dependencies": {
     "@iarna/toml": "^2.2.5",
+    "@octokit/rest": "^18.12.0",
     "commander": "^8.3.0",
     "conventional-changelog": "3.1.23",
     "conventional-recommended-bump": "6.0.10",
     "git-semver-tags": "4.1.0",
     "object-path": "^0.11.5",
+    "octokit": "^1.7.0",
     "semver": "^7.3.2",
+    "simple-git": "^2.47.0",
     "yaml": "^1.10.0"
   },
   "devDependencies": {
