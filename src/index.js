@@ -279,6 +279,7 @@ async function run(parameters) {
         await git.push()
         await git.pushTags()
       } catch(e) {
+        console.log(e)
 
       }
 
