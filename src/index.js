@@ -4,6 +4,7 @@ const path = require('path')
 const getVersioning = require('./version')
 const changelog = require('./helpers/generateChangelog')
 const requireScript = require('./helpers/requireScript')
+const getRepository = require('./helpers/repository')
 const { Command } = require('commander');
 const { Octokit } = require("@octokit/rest");
 const simpleGit = require('simple-git');
@@ -268,30 +269,7 @@ async function run(parameters) {
       // Create the new tag
       //await git.createTag(gitTag)
 
-
-      try{
-        const ref = await octokit.rest.git.getRef({
-          owner:"hs-baumappe",
-          repo:"baumappe-tbd",
-          ref:"heads/test-pr2",
-        });
-      }catch(data){
-        if ( data.status == 404) {
-          console.log("Branch not found, creating...")
-         const ref = await octokit.rest.git.createRef({
-            owner:"hs-baumappe", // get from azure pipelines env
-            repo:"baumappe-tbd", // get from azure pipelines env
-            ref:"refs/heads/test-pr2", // set branch name with tag
-            sha: "a2dcc5a77433cda8bae3c566341a22bef79a1505" //get sha from azure pipelines env
-          })
-          if (ref.status == 200){
-            console.log("Branch created.")
-          }else{
-            console.log("Branch didn't create")
-          }
-        }
-      }
-
+     //const repository = getRepository()
 
       try {
         await git.checkoutLocalBranch(gitTag);
