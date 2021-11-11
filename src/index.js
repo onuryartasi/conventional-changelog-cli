@@ -275,8 +275,9 @@ async function run(parameters) {
         await git.checkoutLocalBranch(gitTag);
         await git.add([outputFile,conventionalConfigFile])
         await git.commit(gitCommitMessage.replace('{version}', gitTag))
-        await git.addTag(gitTag)
-        await git.push("--follow-tags")
+        await git.tag(["-a",gitTag,"-m",stringChangelog])
+        await git.push()
+        await git.pushTags()
       } catch(e) {
 
       }
