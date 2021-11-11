@@ -285,8 +285,8 @@ async function run(parameters) {
         await git.checkoutLocalBranch(gitTag);
         await git.add([versionFile,outputFile])
         await git.commit(gitMessage)
-        await git.push("origin",gitTag)
         await git.tag(["-a",gitTag,"-m",stringChangelog])
+        await git.push("origin",`refs/heads/${gitTag}:refs/heads/${gitTag}`)
         await git.pushTags()
         await octokit.rest.pulls.create({
           owner: repository.owner,
