@@ -9,7 +9,6 @@ const { Command } = require('commander');
 const { Octokit } = require("@octokit/rest");
 const simpleGit = require('simple-git');
 const program = new Command();
-const git = simpleGit();
 
 
 
@@ -118,11 +117,20 @@ async function run(parameters) {
 
     module.exports.preChangelogGenerationFile = preChangelogGenerationFile
     module.exports.fallbackVersion = fallbackVersion
-    git.addConfig("user.name",gitUserName)
-    git.addConfig("user.email",gitUserEmail)
 
     const token = process.env.GITHUB_TOKEN || '';
     const octokit = new Octokit({ auth: token });
+
+    const git = simpleGit({
+      config: [
+       `Authorization: token ${token}`
+      ]
+    });
+    
+    git.addConfig("user.name",gitUserName)
+    git.addConfig("user.email",gitUserEmail)
+
+
 
     console.log(`Using "${preset}" preset`)
     console.log(`Using "${gitCommitMessage}" as commit message`)
