@@ -118,6 +118,7 @@ async function run(parameters) {
     module.exports.preChangelogGenerationFile = preChangelogGenerationFile
     module.exports.fallbackVersion = fallbackVersion
 
+    const repository = getRepository()
     const token = process.env.GITHUB_TOKEN || '';
     const octokit = new Octokit({ auth: token });
 
@@ -125,8 +126,7 @@ async function run(parameters) {
     
     git.addConfig("user.name",gitUserName)
     git.addConfig("user.email",gitUserEmail)
-    git.addConfig('http.extraheader', `Authorization: Basic ${token}`);
-
+    git.addRemote(`https://x-access-token:${token}@github.com/${repository.owner}/${repository.repo}.git`)
 
 
     console.log(`Using "${preset}" preset`)
@@ -277,7 +277,7 @@ async function run(parameters) {
       // Create the new tag
       //await git.createTag(gitTag)
 
-     //const repository = getRepository()
+
 
       try {
         await git.checkoutLocalBranch(gitTag);
