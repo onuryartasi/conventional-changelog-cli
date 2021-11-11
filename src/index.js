@@ -294,6 +294,14 @@ async function run(parameters) {
       }
 
 
+      octokit.rest.pulls.create({
+        owner: repository.owner,
+        repo: repository.repo,
+        head:gitTag,
+        base: 'main',
+      }).catch((e) => {
+        console.log(e)
+      });
 
 
 
