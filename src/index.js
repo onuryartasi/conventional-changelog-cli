@@ -13,6 +13,7 @@ const git = simpleGit();
 
 
 
+
 async function main() {
   program.version('1.0.2');
   program.enablePositionalOptions();
@@ -117,6 +118,8 @@ async function run(parameters) {
 
     module.exports.preChangelogGenerationFile = preChangelogGenerationFile
     module.exports.fallbackVersion = fallbackVersion
+    git.addConfig("user.name",gitUserName)
+    git.addConfig("user.email",gitUserEmail)
 
     const token = process.env.GITHUB_TOKEN || '';
     const octokit = new Octokit({ auth: token });
