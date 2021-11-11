@@ -121,14 +121,11 @@ async function run(parameters) {
     const token = process.env.GITHUB_TOKEN || '';
     const octokit = new Octokit({ auth: token });
 
-    const git = simpleGit({
-      config: [
-       `Authorization: token ${token}`
-      ]
-    });
+    const git = simpleGit()
     
     git.addConfig("user.name",gitUserName)
     git.addConfig("user.email",gitUserEmail)
+    git.addConfig('http.extraheader', `Authorization: Basic ${token}`);
 
 
 
