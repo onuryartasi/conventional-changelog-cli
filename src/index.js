@@ -294,6 +294,7 @@ async function run(parameters) {
           head:gitTag,
           base: 'main',
           title: gitMessage,
+          body: stringChangelog,
         });
       } catch(e) {
         console.log(e)
