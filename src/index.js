@@ -126,8 +126,7 @@ async function run(parameters) {
     
     git.addConfig("user.name",gitUserName)
     git.addConfig("user.email",gitUserEmail)
-    git.addRemote(`https://x-access-token:${token}@github.com/${repository.owner}/${repository.repo}.git`)
-    console.log(git.listRemote())
+
 
 
     console.log(`Using "${preset}" preset`)
@@ -281,6 +280,8 @@ async function run(parameters) {
 
 
       try {
+        await git.addRemote(`https://x-access-token:${token}@github.com/${repository.owner}/${repository.repo}.git`)
+        console.log(await git.listRemote())
         await git.checkoutLocalBranch(gitTag);
         await git.add([versionFile,outputFile])
         await git.commit(gitCommitMessage.replace('{version}', gitTag))
