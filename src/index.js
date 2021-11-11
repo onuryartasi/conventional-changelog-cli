@@ -279,7 +279,7 @@ async function run(parameters) {
         await git.add([versionFile,outputFile])
         await git.commit(gitCommitMessage.replace('{version}', gitTag))
         await git.tag(["-a",gitTag,"-m",stringChangelog])
-        await git.push()
+        await git.push("origin",gitTag)
         await git.pushTags()
       } catch(e) {
         console.log(e)
