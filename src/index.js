@@ -278,8 +278,8 @@ async function run(parameters) {
         await git.checkoutLocalBranch(gitTag);
         await git.add([versionFile,outputFile])
         await git.commit(gitCommitMessage.replace('{version}', gitTag))
-        await git.tag(["-a",gitTag,"-m",stringChangelog])
         await git.push("origin",gitTag)
+        await git.tag(["-a",gitTag,"-m",stringChangelog])
         await git.pushTags()
       } catch(e) {
         console.log(e)
