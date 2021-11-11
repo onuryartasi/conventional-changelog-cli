@@ -278,35 +278,27 @@ async function run(parameters) {
       //await git.createTag(gitTag)
 
 
-
+      const gitMessage = gitCommitMessage.replace('{version}', gitTag)
       try {
         await git.remote(["set-url","origin",`https://x-access-token:${token}@github.com/${repository.owner}/${repository.repo}.git`])
         console.log(await git.listRemote())
         await git.checkoutLocalBranch(gitTag);
         await git.add([versionFile,outputFile])
-        await git.commit(gitCommitMessage.replace('{version}', gitTag))
+        await git.commit(gitMessage)
         await git.push("origin",gitTag)
         await git.tag(["-a",gitTag,"-m",stringChangelog])
         await git.pushTags()
+        await octokit.rest.pulls.create({
+          owner: repository.owner,
+          repo: repository.repo,
+          head:gitTag,
+          base: 'main',
+          title: gitMessage,
+        });
       } catch(e) {
         console.log(e)
 
       }
-
-
-      octokit.rest.pulls.create({
-        owner: repository.owner,
-        repo: repository.repo,
-        head:gitTag,
-        base: 'main',
-      }).catch((e) => {
-        console.log(e)
-      });
-
-
-
-
-
 
 
       // core.info('Push all changes')
