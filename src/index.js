@@ -308,7 +308,7 @@ async function run(parameters) {
 
       console.log(prlist)
       let check = false
-      prlist.forEach(async (pr) => {
+      prlist.data.forEach(async (pr) => {
         console.log(pr)
         if (pr.title.includes(gitCommitMessage.replace('{version}', packageName))){
           check = true
