@@ -305,7 +305,6 @@ async function run(parameters) {
         state: 'open',
       });
 
-      console.log(prlist)
       let check = false
       prlist.data.forEach(async (pr) => {
         console.log(pr)
