@@ -295,7 +295,7 @@ async function run(parameters) {
         console.log(commit)
         await git.tag(["-a","-f",gitTag,"-m",stringChangelog])
         await git.push("origin",`refs/heads/${gitTag}:refs/heads/${gitTag}`)
-        await git.pushTags("origin")
+        await git.push("origin",'--tags','--force')
        // await git.pushTags()
 
 
