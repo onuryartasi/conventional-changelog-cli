@@ -273,7 +273,6 @@ async function run(parameters) {
           }
         }
 
-        const packageName = gitTag.replace(version,'')
 
         //await git.add('.')
         //await git.commit(gitCommitMessage.replace('{version}', gitTag))
@@ -282,7 +281,7 @@ async function run(parameters) {
       // Create the new tag
       //await git.createTag(gitTag)
 
-
+      const packageName = gitTag.replace(version,'')
       const gitMessage = gitCommitMessage.replace('{version}', gitTag)
       try {
         await git.remote(["set-url","origin",`https://x-access-token:${token}@github.com/${repository.owner}/${repository.repo}.git`])
