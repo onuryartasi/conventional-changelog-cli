@@ -293,6 +293,7 @@ async function run(parameters) {
         await git.add([versionFile,outputFile])
         const commit = await git.commit(gitMessage)
         console.log(commit)
+        await git.pull("origin", gitTag)
         await git.tag(["-a","-f",gitTag,"-m",stringChangelog])
         await git.push("origin",`refs/heads/${gitTag}:refs/heads/${gitTag}`)
         await git.push("origin",'--tags','--force')
