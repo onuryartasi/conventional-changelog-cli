@@ -307,8 +307,8 @@ async function run(parameters) {
       });
 
       let check = false
-      prlist.array.forEach(pr => {
-        
+      prlist.array.forEach(async (pr) => {
+
         if (pr.title.includes(gitCommitMessage.replace('{version}', packageName))){
           check = true
 
@@ -318,7 +318,7 @@ async function run(parameters) {
           repo:repository.repo,
           pull_number:pr.number,
           expected_head_sha: commit.commit,
-          });
+          })
 
           await octokit.rest.pulls.update({
             owner:repository.owner,
@@ -326,26 +326,25 @@ async function run(parameters) {
             pull_number:pr.number,
             title:gitMessage,
             body:stringChangelog,
-          });
+          })
         }
       });
 
 
-      if (!check){
-        await octokit.rest.pulls.create({
-          owner: repository.owner,
-          repo: repository.repo,
-          head:gitTag,
-          base: 'main',
-          title: gitMessage,
-          body: stringChangelog,
-        });
-      }
+    if (!check){
+      await octokit.rest.pulls.create({
+        owner: repository.owner,
+        repo: repository.repo,
+        head:gitTag,
+        base: 'main',
+        title: gitMessage,
+        body: stringChangelog,
+      });
+    }
 
-      } catch(e) {
-        console.log(e)
-
-      }
+    } catch(e) {
+      console.log(e)
+    }
 
 
       // core.info('Push all changes')
