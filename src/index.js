@@ -8,6 +8,7 @@ const getRepository = require('./helpers/repository')
 const { Command } = require('commander');
 const { Octokit } = require("@octokit/rest");
 const simpleGit = require('simple-git');
+const { title } = require('process')
 const program = new Command();
 
 
@@ -220,6 +221,7 @@ async function run(parameters) {
       }
 
       let gitTag = `${tagPrefix}${newVersion}`
+      const version = `${tagPrefix}${newVersion}`
 
       if (preChangelogGenerationFile) {
         const preChangelogGenerationScript = requireScript(preChangelogGenerationFile)
@@ -271,6 +273,8 @@ async function run(parameters) {
           }
         }
 
+        const packageName = gitTag.replace(version,'')
+
         //await git.add('.')
         //await git.commit(gitCommitMessage.replace('{version}', gitTag))
       }
@@ -287,11 +291,44 @@ async function run(parameters) {
         await git.pull("origin", gitTag)
         await git.stash(["pop"])
         await git.add([versionFile,outputFile])
-        await git.commit(gitMessage)
+        const commit = await git.commit(gitMessage)
+        console.log(commit)
         await git.tag(["-a",gitTag,"-m",stringChangelog])
         await git.push("origin",`refs/heads/${gitTag}:refs/heads/${gitTag}`)
         await git.pushTags("origin")
        // await git.pushTags()
+
+
+      //  //Check is there pr exists
+
+      //  const prlist  = await octokit.rest.pulls.list({
+      //   owner: repository.owner,
+      //   repo: repository.repo,
+      //   base: 'main',
+      //   state: 'open',
+      // });
+
+      // prlist.array.forEach(pr => {
+        
+      //   if (pr.title.includes(gitCommitMessage.replace('{version}', packageName))){
+
+      //    await octokit.rest.pulls.updateBranch({
+      //     owner:repository.owner,
+      //     repo:repository.repo,
+      //     pull_number:pr.number,
+      //     expected_head_sha: "",
+      //     });
+
+      //     await octokit.rest.pulls.update({
+      //       owner:repository.owner,
+      //       repo:repository.repo,
+      //       pull_number:pr.number,
+      //       title:gitMessage,
+      //       body:stringChangelog,
+      //     });
+      //   }
+      // });
+
         await octokit.rest.pulls.create({
           owner: repository.owner,
           repo: repository.repo,
