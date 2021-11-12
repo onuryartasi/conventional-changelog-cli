@@ -290,46 +290,48 @@ async function run(parameters) {
         await git.add([versionFile,outputFile])
         const commit = await git.commit(gitMessage)
         console.log(commit)
-        console.log("pull")
         const pull = await git.pull("origin", gitTag)
-        console.log("end pull")
-        console.log(pull)
         await git.tag(["-a","-f",gitTag,"-m",stringChangelog])
         await git.push(["origin",'--force','--tags',`refs/heads/${gitTag}:refs/heads/${gitTag}`])
         //await git.push(["origin",'--force'])
        // await git.pushTags()
 
 
-      //  //Check is there pr exists
+       //Check is there pr exists
 
-      //  const prlist  = await octokit.rest.pulls.list({
-      //   owner: repository.owner,
-      //   repo: repository.repo,
-      //   base: 'main',
-      //   state: 'open',
-      // });
+       const prlist  = await octokit.rest.pulls.list({
+        owner: repository.owner,
+        repo: repository.repo,
+        base: 'main',
+        state: 'open',
+      });
 
-      // prlist.array.forEach(pr => {
+      let check = false
+      prlist.array.forEach(pr => {
         
-      //   if (pr.title.includes(gitCommitMessage.replace('{version}', packageName))){
+        if (pr.title.includes(gitCommitMessage.replace('{version}', packageName))){
+          check = true
 
-      //    await octokit.rest.pulls.updateBranch({
-      //     owner:repository.owner,
-      //     repo:repository.repo,
-      //     pull_number:pr.number,
-      //     expected_head_sha: "",
-      //     });
 
-      //     await octokit.rest.pulls.update({
-      //       owner:repository.owner,
-      //       repo:repository.repo,
-      //       pull_number:pr.number,
-      //       title:gitMessage,
-      //       body:stringChangelog,
-      //     });
-      //   }
-      // });
+         await octokit.rest.pulls.updateBranch({
+          owner:repository.owner,
+          repo:repository.repo,
+          pull_number:pr.number,
+          expected_head_sha: commit.commit,
+          });
 
+          await octokit.rest.pulls.update({
+            owner:repository.owner,
+            repo:repository.repo,
+            pull_number:pr.number,
+            title:gitMessage,
+            body:stringChangelog,
+          });
+        }
+      });
+
+
+      if (!check){
         await octokit.rest.pulls.create({
           owner: repository.owner,
           repo: repository.repo,
@@ -338,6 +340,8 @@ async function run(parameters) {
           title: gitMessage,
           body: stringChangelog,
         });
+      }
+
       } catch(e) {
         console.log(e)
 
