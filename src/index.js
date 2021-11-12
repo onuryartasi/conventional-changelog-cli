@@ -287,10 +287,10 @@ async function run(parameters) {
       try {
         await git.remote(["set-url","origin",`https://x-access-token:${token}@github.com/${repository.owner}/${repository.repo}.git`])
         await git.checkoutLocalBranch(gitTag);
-        const commit = await git.commit(gitMessage)
+        await git.add([versionFile,outputFile])
+        await git.commit(gitMessage)
         console.log(commit)
         await git.pull("origin", gitTag)
-        await git.add([versionFile,outputFile])
         console.log("pull")
         await git.pull("origin", gitTag)
         await git.tag(["-a","-f",gitTag,"-m",stringChangelog])
