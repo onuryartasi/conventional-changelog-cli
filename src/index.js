@@ -126,6 +126,7 @@ async function run(parameters) {
     
     git.addConfig("user.name",gitUserName)
     git.addConfig("user.email",gitUserEmail)
+    git.addConfig("pull.rebase","true")
 
 
 
