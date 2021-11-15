@@ -300,6 +300,8 @@ async function run(parameters) {
        // await git.pushTags()
 
 
+       
+
        //Check is there pr exists
 
        const prlist  = await octokit.rest.pulls.list({
@@ -315,12 +317,19 @@ async function run(parameters) {
         if (pr.title.includes(gitCommitMessage.replace('{version}', packageName))){
           check = true
 
+          //Get Sha
+          const data =  await octokit.rest.git.getRef({
+            owner: repository.owner,
+            repo: repository.repo,
+            ref: gitTag,
+          });
+      
           await octokit.rest.pulls.updateBranch({
             owner:repository.owner,
             repo:repository.repo,
             pull_number:pr.number,
-            expected_head_sha: commit.commit,
-            })
+            expected_head_sha: data.object.sha
+            });
 
           await octokit.rest.pulls.update({
             owner:repository.owner,
@@ -333,6 +342,7 @@ async function run(parameters) {
       });
 
 
+    
     if (!check){
       await octokit.rest.pulls.create({
         owner: repository.owner,
