@@ -289,11 +289,11 @@ async function run(parameters) {
         console.log(`stash status : ${stash}`)
         const status = await git.checkout(["-B",gitTag]);
         console.log(`Checkout status: ${status}`)
+        const pull = await git.pull("origin", gitTag)
         await git.stash(["pop"])
         await git.add([versionFile,outputFile])
         const commit = await git.commit(gitMessage)
         console.log(commit)
-        const pull = await git.pull("origin", gitTag)
         await git.tag(["-a","-f",gitTag,"-m",stringChangelog])
         await git.push(["origin",'--force','--tags',`refs/heads/${gitTag}:refs/heads/${gitTag}`])
         //await git.push(["origin",'--force'])
