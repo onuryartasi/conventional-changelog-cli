@@ -324,6 +324,8 @@ async function run(parameters) {
             ref: `heads/${gitTag}`,
           });
       
+
+          console.log(`ref: ${data}`)
           await octokit.rest.pulls.updateBranch({
             owner:repository.owner,
             repo:repository.repo,
