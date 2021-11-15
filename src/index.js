@@ -331,7 +331,7 @@ async function run(parameters) {
             owner:repository.owner,
             repo:repository.repo,
             pull_number:pr.number,
-            expected_head_sha: 
+            expected_head_sha: data_j.object.sha
             });
 
           await octokit.rest.pulls.update({
