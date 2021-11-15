@@ -323,12 +323,15 @@ async function run(parameters) {
             repo: repository.repo,
             ref: `heads/${gitTag}`,
           });
-          
+
+          console.log(JSON.stringify(data))
+          const data_j = JSON.stringify(data)
+          console.log(data_j.object)
           await octokit.rest.pulls.updateBranch({
             owner:repository.owner,
             repo:repository.repo,
             pull_number:pr.number,
-            expected_head_sha: JSON.stringify(data).object.sha
+            expected_head_sha: 
             });
 
           await octokit.rest.pulls.update({
