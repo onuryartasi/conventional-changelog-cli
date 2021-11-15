@@ -323,7 +323,7 @@ async function run(parameters) {
           //   ref: `heads/${gitTag}`,
           // });
 
-          const data = octokit.rest.repos.listCommits({
+          const data = await octokit.rest.repos.listCommits({
             owner: repository.owner,
             repo: repository.repo,
             sha: gitTag,
