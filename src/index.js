@@ -285,7 +285,8 @@ async function run(parameters) {
       const gitMessage = gitCommitMessage.replace('{version}', gitTag)
       try {
         await git.remote(["set-url","origin",`https://x-access-token:${token}@github.com/${repository.owner}/${repository.repo}.git`])
-        await git.stash()
+        const stash = await git.stash()
+        console.log(`stash status : ${stash}`)
         const status = await git.checkout(["-B",gitTag]);
         console.log(`Checkout status: ${status}`)
         await git.stash(["pop"])
