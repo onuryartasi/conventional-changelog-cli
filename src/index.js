@@ -293,9 +293,9 @@ async function run(parameters) {
         await git.stash(["pop"])
         await git.add([versionFile,outputFile])
         const commit = await git.commit(gitMessage)
-        console.log(commit)
         await git.tag(["-a","-f",gitTag,"-m",stringChangelog])
         await git.push(["origin",'--force','--tags',`refs/heads/${gitTag}:refs/heads/${gitTag}`])
+        await git.status()
         //await git.push(["origin",'--force'])
        // await git.pushTags()
 
@@ -313,7 +313,6 @@ async function run(parameters) {
 
       let check = false
       prlist.data.forEach(async (pr) => {
-        console.log(pr)
         if (pr.title.includes(gitCommitMessage.replace('{version}', packageName))){
           check = true
 
@@ -355,6 +354,7 @@ async function run(parameters) {
     }
 
     } catch(e) {
+      await git.status()
       console.log(e)
     }
 
