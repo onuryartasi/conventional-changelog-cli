@@ -285,8 +285,10 @@ async function run(parameters) {
       const gitMessage = gitCommitMessage.replace('{version}', gitTag)
       try {
         await git.remote(["set-url","origin",`https://x-access-token:${token}@github.com/${repository.owner}/${repository.repo}.git`])
+        await git.stash()
         const status = await git.checkout(gitTag);
         console.log(status)
+        await git.stash(["pop"])
         await git.add([versionFile,outputFile])
         const commit = await git.commit(gitMessage)
         console.log(commit)
