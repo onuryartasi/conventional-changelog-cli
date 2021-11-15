@@ -285,7 +285,8 @@ async function run(parameters) {
       const gitMessage = gitCommitMessage.replace('{version}', gitTag)
       try {
         await git.remote(["set-url","origin",`https://x-access-token:${token}@github.com/${repository.owner}/${repository.repo}.git`])
-        await git.checkoutLocalBranch(gitTag);
+        const status = await git.checkout(gitTag);
+        console.log(status)
         await git.add([versionFile,outputFile])
         const commit = await git.commit(gitMessage)
         console.log(commit)
@@ -311,12 +312,12 @@ async function run(parameters) {
         if (pr.title.includes(gitCommitMessage.replace('{version}', packageName))){
           check = true
 
-         await octokit.rest.pulls.updateBranch({
-          owner:repository.owner,
-          repo:repository.repo,
-          pull_number:pr.number,
-          expected_head_sha: commit.commit,
-          })
+          await octokit.rest.pulls.updateBranch({
+            owner:repository.owner,
+            repo:repository.repo,
+            pull_number:pr.number,
+            expected_head_sha: commit.commit,
+            })
 
           await octokit.rest.pulls.update({
             owner:repository.owner,
