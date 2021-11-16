@@ -316,34 +316,39 @@ async function run(parameters) {
       let check = false
       prlist.data.forEach(async (pr) => {
         if (pr.title.includes(gitCommitMessage.replace('{version}', packageName))){
-          check = true
 
-          // //Get Sha
-          // const data =  await octokit.rest.git.getRef({
-          //   owner: repository.owner,
-          //   repo: repository.repo,
-          //   ref: `heads/${gitTag}`,
-          // });
-
-          const data = await octokit.rest.repos.listCommits({
-            owner: repository.owner,
-            repo: repository.repo,
-            sha: gitTag,
-          });
-
-          await octokit.rest.pulls.updateBranch({
-            owner:repository.owner,
-            repo:repository.repo,
-            pull_number:pr.number,
-            expected_head_sha: data.data[0].sha
+          if(gitTag === pr.head.ref)
+          {
+            check = true
+            const data = await octokit.rest.repos.listCommits({
+              owner: repository.owner,
+              repo: repository.repo,
+              sha: gitTag,
             });
+  
+            await octokit.rest.pulls.updateBranch({
+              owner:repository.owner,
+              repo:repository.repo,
+              pull_number:pr.number,
+              expected_head_sha: data.data[0].sha
+              });
+
+
+            await octokit.rest.pulls.update({
+              owner:repository.owner,
+              repo:repository.repo,
+              pull_number:pr.number,
+              title:gitMessage,
+              body:stringChangelog,
+            })
+  
+          }
 
           await octokit.rest.pulls.update({
             owner:repository.owner,
             repo:repository.repo,
             pull_number:pr.number,
-            title:gitMessage,
-            body:stringChangelog,
+            state:"closed",
           })
         }
       });
