@@ -281,98 +281,101 @@ async function run(parameters) {
       // Create the new tag
       //await git.createTag(gitTag)
 
-      const packageName = gitTag.replace(version,'')
-      const gitMessage = gitCommitMessage.replace('{version}', gitTag)
-      try {
-        await git.remote(["set-url","origin",`https://x-access-token:${token}@github.com/${repository.owner}/${repository.repo}.git`])
-        const stash = await git.stash()
-        console.log(`stash status : ${stash}`)
-        const status = await git.checkout(["-B",gitTag]);
-        console.log(`Checkout status: ${status}`)
-        const pull = await git.raw("pull","origin", gitTag).catch(data => {
-          console.log(`Git pull error: ${data}`)
-        })
-        await git.stash(["pop"])
-        await git.add([versionFile,outputFile])
-        const commit = await git.commit(gitMessage)
-        await git.tag(["-a","-f",gitTag,"-m",stringChangelog])
-        await git.push(["origin",'--force','--tags',`refs/heads/${gitTag}:refs/heads/${gitTag}`])
-        await git.status()
-        //await git.push(["origin",'--force'])
-       // await git.pushTags()
+      if (skipEmptyRelease){
+        const packageName = gitTag.replace(version,'')
+
+        const gitMessage = gitCommitMessage.replace('{version}', gitTag)
+        try {
+          await git.remote(["set-url","origin",`https://x-access-token:${token}@github.com/${repository.owner}/${repository.repo}.git`])
+          const stash = await git.stash()
+          console.log(`stash status : ${stash}`)
+          const status = await git.checkout(["-B",gitTag]);
+          console.log(`Checkout status: ${status}`)
+          const pull = await git.raw("pull","origin", gitTag).catch(data => {
+            console.log(`Git pull error: ${data}`)
+          })
+          await git.stash(["pop"])
+          await git.add([versionFile,outputFile])
+          const commit = await git.commit(gitMessage)
+          await git.tag(["-a","-f",gitTag,"-m",stringChangelog])
+          await git.push(["origin",'--force','--tags',`refs/heads/${gitTag}:refs/heads/${gitTag}`])
+          await git.status()
+          //await git.push(["origin",'--force'])
+        // await git.pushTags()
 
 
-       
+        
 
-       //Check is there pr exists
+        //Check is there pr exists
 
-       const prlist  = await octokit.rest.pulls.list({
-        owner: repository.owner,
-        repo: repository.repo,
-        base: 'main',
-        state: 'open',
-      });
+        const prlist  = await octokit.rest.pulls.list({
+          owner: repository.owner,
+          repo: repository.repo,
+          base: 'main',
+          state: 'open',
+        });
 
-      let check = false
-      prlist.data.forEach(async (pr) => {
-        if (pr.title.includes(gitCommitMessage.replace('{version}', packageName))){
+        let check = false
+        prlist.data.forEach(async (pr) => {
+          if (pr.title.includes(gitCommitMessage.replace('{version}', packageName))){
 
-          if(gitTag === pr.head.ref)
-          {
-            check = true
-            const data = await octokit.rest.repos.listCommits({
-              owner: repository.owner,
-              repo: repository.repo,
-              sha: gitTag,
-            });
-  
-            await octokit.rest.pulls.updateBranch({
-              owner:repository.owner,
-              repo:repository.repo,
-              pull_number:pr.number,
-              expected_head_sha: data.data[0].sha
+            if(gitTag === pr.head.ref)
+            {
+              check = true
+              const data = await octokit.rest.repos.listCommits({
+                owner: repository.owner,
+                repo: repository.repo,
+                sha: gitTag,
               });
-
-
-            await octokit.rest.pulls.update({
-              owner:repository.owner,
-              repo:repository.repo,
-              pull_number:pr.number,
-              title:gitMessage,
-              body:stringChangelog,
-            })
-  
-          }else{
-            await octokit.rest.pulls.update({
-              owner:repository.owner,
-              repo:repository.repo,
-              pull_number:pr.number,
-              state:"closed",
-            })
-          }
-
-        }
-      });
-
-
     
-    if (!check){
-      await octokit.rest.pulls.create({
-        owner: repository.owner,
-        repo: repository.repo,
-        head:gitTag,
-        base: 'main',
-        title: gitMessage,
-        body: stringChangelog,
-      });
+              await octokit.rest.pulls.updateBranch({
+                owner:repository.owner,
+                repo:repository.repo,
+                pull_number:pr.number,
+                expected_head_sha: data.data[0].sha
+                });
+
+
+              await octokit.rest.pulls.update({
+                owner:repository.owner,
+                repo:repository.repo,
+                pull_number:pr.number,
+                title:gitMessage,
+                body:stringChangelog,
+              })
+    
+            }else{
+              await octokit.rest.pulls.update({
+                owner:repository.owner,
+                repo:repository.repo,
+                pull_number:pr.number,
+                state:"closed",
+              })
+            }
+
+          }
+        });
+
+
+      
+      if (!check){
+        await octokit.rest.pulls.create({
+          owner: repository.owner,
+          repo: repository.repo,
+          head:gitTag,
+          base: 'main',
+          title: gitMessage,
+          body: stringChangelog,
+        });
+      }
+
+      } catch(e) {
+        await git.status()
+        console.log(e)
+      }
+
+
     }
-
-    } catch(e) {
-      await git.status()
-      console.log(e)
-    }
-
-
       // core.info('Push all changes')
       // try {
       //   //await git.push()
