@@ -287,9 +287,11 @@ async function run(parameters) {
         await git.remote(["set-url","origin",`https://x-access-token:${token}@github.com/${repository.owner}/${repository.repo}.git`])
         const stash = await git.stash()
         console.log(`stash status : ${stash}`)
-        const status = await git.raw('checkout','-B', gitTag,'2>/dev/null');
+        const status = await git.checkout(["-B",gitTag]);
         console.log(`Checkout status: ${status}`)
-        const pull = await git.pull("origin", gitTag)
+        const pull = await git.raw("pull","origin", gitTag).catch(data => {
+          console.log(`Git pull error: ${data}`)
+        })
         await git.stash(["pop"])
         await git.add([versionFile,outputFile])
         const commit = await git.commit(gitMessage)
