@@ -288,7 +288,6 @@ async function run(parameters) {
         const stash = await git.stash()
         console.log(`stash status : ${stash}`)
         const status = await git.raw('checkout','-B', gitTag,'2>/dev/null').catch(swallow);
-        
         console.log(`Checkout status: ${status}`)
         const pull = await git.pull("origin", gitTag)
         await git.stash(["pop"])
