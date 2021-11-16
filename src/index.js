@@ -342,14 +342,15 @@ async function run(parameters) {
               body:stringChangelog,
             })
   
+          }else{
+            await octokit.rest.pulls.update({
+              owner:repository.owner,
+              repo:repository.repo,
+              pull_number:pr.number,
+              state:"closed",
+            })
           }
 
-          await octokit.rest.pulls.update({
-            owner:repository.owner,
-            repo:repository.repo,
-            pull_number:pr.number,
-            state:"closed",
-          })
         }
       });
 
