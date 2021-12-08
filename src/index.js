@@ -12,8 +12,6 @@ const { title } = require('process')
 const program = new Command();
 
 
-
-
 async function main() {
   program.version('1.0.2');
   program.enablePositionalOptions();
@@ -350,22 +348,20 @@ async function run(parameters) {
                 state:"closed",
               })
             }
-
+            if (!check){
+              await octokit.rest.pulls.create({
+                owner: repository.owner,
+                repo: repository.repo,
+                head:gitTag,
+                base: 'main',
+                title: gitMessage,
+                body: stringChangelog,
+              });
+            }
           }
+
         });
 
-
-      
-      if (!check){
-        await octokit.rest.pulls.create({
-          owner: repository.owner,
-          repo: repository.repo,
-          head:gitTag,
-          base: 'main',
-          title: gitMessage,
-          body: stringChangelog,
-        });
-      }
 
       } catch(e) {
         await git.status()
