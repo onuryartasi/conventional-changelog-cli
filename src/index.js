@@ -287,9 +287,9 @@ async function run(parameters) {
           console.log(`stash status : ${stash}`)
           const status = await git.checkout(["-B",gitTag]);
           console.log(`Checkout status: ${status}`)
-          const pull = await git.raw("pull","origin", gitTag).catch(data => {
-            console.log(`Git pull error: ${data}`)
-          })
+          // const pull = await git.raw("pull","origin", gitTag).catch(data => {
+          //   console.log(`Git pull error: ${data}`)
+          // })
           await git.stash(["pop"])
           await git.add([versionFile,outputFile])
           const commit = await git.commit(gitMessage)
