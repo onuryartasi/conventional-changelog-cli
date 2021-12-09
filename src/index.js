@@ -309,9 +309,11 @@ async function run(parameters) {
         });
 
         let check = false
+        const title = gitCommitMessage.replace('{version}', packageName)
+        console.log(`commit message ${title}`)
         prlist.data.forEach(async (pr) => {
           if (pr.title.includes(gitCommitMessage.replace('{version}', packageName))){
-
+            console.log(`pr title is => ${pr.title}`)
             if(gitTag === pr.head.ref)
             {
               check = true
