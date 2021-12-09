@@ -299,9 +299,6 @@ async function run(parameters) {
           //await git.push(["origin",'--force'])
         // await git.pushTags()
 
-
-        
-
         //Check is there pr exists
 
         const prlist  = await octokit.rest.pulls.list({
@@ -340,6 +337,7 @@ async function run(parameters) {
                 body:stringChangelog,
               })
     
+              console.log(`${pr.number} updated`)
             }else{
               await octokit.rest.pulls.update({
                 owner:repository.owner,
@@ -347,21 +345,24 @@ async function run(parameters) {
                 pull_number:pr.number,
                 state:"closed",
               })
+              console.log(`${pr.number} closed.`)
             }
-            if (!check){
-              await octokit.rest.pulls.create({
-                owner: repository.owner,
-                repo: repository.repo,
-                head:gitTag,
-                base: 'main',
-                title: gitMessage,
-                body: stringChangelog,
-              });
-            }
+
           }
 
         });
 
+        if (!check){
+          await octokit.rest.pulls.create({
+            owner: repository.owner,
+            repo: repository.repo,
+            head:gitTag,
+            base: 'main',
+            title: gitMessage,
+            body: stringChangelog,
+          });
+          console.log(`pr doesn't exists, I created.`)
+        }
 
       } catch(e) {
         await git.status()
