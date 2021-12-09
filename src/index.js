@@ -217,7 +217,6 @@ async function run(parameters) {
       }
 
       let gitTag = `${tagPrefix}${newVersion}`
-      const version = `${tagPrefix}${newVersion}`
 
       if (preChangelogGenerationFile) {
         const preChangelogGenerationScript = requireScript(preChangelogGenerationFile)
@@ -278,7 +277,7 @@ async function run(parameters) {
       //await git.createTag(gitTag)
 
       if (skipEmptyRelease){
-        const packageName = gitTag.replace(version,'')
+        const packageName = gitTag.replace(newVersion,'')
 
         const gitMessage = gitCommitMessage.replace('{version}', gitTag)
         try {
