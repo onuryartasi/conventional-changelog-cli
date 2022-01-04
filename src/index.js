@@ -34,6 +34,7 @@ async function main() {
 .option('--config-file-path <path>','Path to the conventional changelog config file. If set, the preset setting will be ignored')
 .option('--pre-changelog-generation <path>','Path to the pre-changelog-generation script file')
 .option('--fallback-version <version>',"fallback version","0.1.0")
+.option('--reviewer <reviewers...>', 'specify pr reviewers')
 .action((options)=>{
   run(options)
 });
@@ -60,6 +61,7 @@ program
 .option('--config-file-path <path>','Path to the conventional changelog config file. If set, the preset setting will be ignored')
 .option('--pre-changelog-generation <path>','Path to the pre-changelog-generation script file')
 .option('--fallback-version <version>',"fallback version","0.1.0")
+.option('--reviewer <reviewers...>', 'specify pr reviewers')
 .action((options) => {
    getVersion(options);
 });
@@ -109,6 +111,7 @@ async function run(parameters) {
     const commitPath = parameters.commitPath
     const fallbackVersion = parameters.fallbackVersion
     const preChangelogGenerationFile = parameters.preChangelogGeneration
+    const reviewers = parameters.reviewer
 
 
 
@@ -354,14 +357,24 @@ async function run(parameters) {
         });
 
         if (!check){
-          await octokit.rest.pulls.create({
+          const data = await octokit.rest.pulls.create({
             owner: repository.owner,
             repo: repository.repo,
             head:gitTag,
             base: 'main',
             title: gitMessage,
             body: stringChangelog,
+            
           });
+          if (reviewers){
+            octokit.rest.pulls.requestReviewers({
+              owner: repository.owner,
+              repo: repository.repo,
+              pull_number = data.data.number,
+              reviewers
+            });
+            console.log("reviewer added. ",reviewers)
+          }
           console.log(`pr doesn't exists, I created.`)
         }
 
