@@ -370,7 +370,7 @@ async function run(parameters) {
             octokit.rest.pulls.requestReviewers({
               owner: repository.owner,
               repo: repository.repo,
-              pull_number = data.data.number,
+              pull_number: data.data.number,
               reviewers
             });
             console.log("reviewer added. ",reviewers)
