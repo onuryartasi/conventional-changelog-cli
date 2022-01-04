@@ -340,7 +340,13 @@ async function run(parameters) {
                 title:gitMessage,
                 body:stringChangelog,
               })
-    
+
+              await octokit.rest.pulls.requestReviewers({
+                owner: repository.owner,
+                repo: repository.repo,
+                pull_number: pr.number,
+                reviewers
+              });
               console.log(`${pr.number} updated`)
             }else{
               await octokit.rest.pulls.update({
@@ -367,7 +373,7 @@ async function run(parameters) {
             
           });
           if (reviewers){
-            octokit.rest.pulls.requestReviewers({
+            await octokit.rest.pulls.requestReviewers({
               owner: repository.owner,
               repo: repository.repo,
               pull_number: data.data.number,
