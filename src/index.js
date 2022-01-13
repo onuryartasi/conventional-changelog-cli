@@ -155,7 +155,8 @@ async function run(parameters) {
     
 
     
-    const config = conventionalConfigFile && requireScript(preChangelogGenerationFile)
+    const config = conventionalConfigFile && requireScript(conventionalConfigFile)
+    console.log(config)
     const gitRawCommitsOpts = {}
     const options = {
       preset,
