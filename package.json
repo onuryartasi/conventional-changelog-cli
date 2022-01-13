@@ -1,6 +1,6 @@
 {
   "name": "conventional-changelog-cli",
-  "version": "1.0.87",
+  "version": "1.0.80",
   "description": "Generates a changelog with the Conventional Changelog CLI",
   "keywords": [
     "changelog",
